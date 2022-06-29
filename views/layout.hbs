@@ -8,8 +8,23 @@
     <title>{{title}}</title>
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
+<!-- views/layout.hbs -->
+<!-- ... -->
 
   <body>
+
+    <!-- add the navbar code below -->
+    <nav>
+      <ul>
+        <li id="to-left">
+          <p><a href="/"> Home </a></p>
+        </li>
+        <li id="to-right">
+          <a href="/signup">Signup</a><p></p><br>
+          <a href="/login">Login</a>
+        </li>
+      </ul>
+    </nav>
 
     {{{body}}}
 
