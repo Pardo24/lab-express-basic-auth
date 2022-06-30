@@ -3,14 +3,16 @@ const router = new Router();
 const bcryptjs = require("bcryptjs");
 const saltRounds = 10
 const mongoose = require("mongoose")
+const { isLoggedIn, isLoggedOut } = require('../middleware/route-guard.js');
 
 const User = require("../models/User.model");
 
 
-router.get("/signup", (req,res)=>{
+router.get("/signup",isLoggedOut, (req,res)=>{
 
     res.render("../views/auth/signup.hbs")
 })
+
 router.post("/signup", (req,res, next)=>{
    const {username, email, password} = req.body
    if (!username | !email | !password) {
@@ -34,7 +36,7 @@ router.post("/signup", (req,res, next)=>{
         })
     })
     .then((userFromDb)=>{
-        res.redirect("/user/profile")
+        res.redirect("/userProfile")
     })
     .catch(error => {
         if (error instanceof mongoose.Error.ValidationError) {
@@ -49,12 +51,8 @@ router.post("/signup", (req,res, next)=>{
       })
 });
 
-router.get("/user/profile",(req, res)=>{
-    res.render("../views/users/user-profile")
-})
 
-
-router.get('/login', (req, res) => {
+router.get('/login',isLoggedOut, (req, res) => {
     res.render('../views/auth/login')
 });
 
@@ -85,7 +83,14 @@ router.post("/login",(req, res, next)=>{
         .catch(error => next(error));
     });
 
-    router.get('/userProfile', (req, res) => {
+    router.post("/logout", isLoggedIn, (req,res)=>{
+      req.session.destroy(err => {
+        if (err) next(err);
+        res.redirect('/');
+      })
+    });
+
+    router.get('/userProfile',isLoggedIn, (req, res) => {
         res.render('../views/users/user-profile', { userInSession: req.session.currentUser });
       });
 
